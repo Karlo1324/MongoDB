@@ -1,3 +1,4 @@
+const requireAuth = require('../middleware/auth');
 require('dotenv').config();
 const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']); // Add this line to fix ECONNREFUSED DNS resolution
@@ -7,7 +8,7 @@ const express = require('express');
 const router = express.Router();
 const Student = require('../models/Student');
 
-router.get('/', async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
     try {
         const students = await Student.find();
         res.json(students);
@@ -16,7 +17,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', requireAuth, async (req, res) => {
     try {
         const newStudent = await Student.create(req.body);
         res.status(201).json(newStudent);
@@ -26,7 +27,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', requireAuth, async (req, res) => {
     try {
         const updatedStudent = await Student.findByIdAndUpdate(
             req.params.id,
@@ -42,7 +43,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', requireAuth, async (req, res) => {
     try {
         const deletedStudent = await Student.findByIdAndDelete(req.params.id);
         if (!deletedStudent) {
